@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import { notFoundError, errorHandler } from './Middleware/error-handler.js'
 import morgan from 'morgan';
 import GameRouter from './Routes/Games.route.js';
+import UserRouter from './Routes/Users.route.js';
+import cors from 'cors'
 
 const app = express();
 const database = "workshop4SIM5"
@@ -22,8 +24,12 @@ mongoose
     })
 
 
+app.use(cors())
 app.use(morgan("dev"))
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use('/img', express.static('public/images'));
+app.use('/avatar', express.static('public/images'));
 
 app.use((req, res, next) => {
     console.log("Middleware just ran")
@@ -36,6 +42,7 @@ app.use("/gse", (req, res, next) => {
 })
 
 app.use('/game', GameRouter)
+app.use('/user', UserRouter)
 
 app.use(errorHandler)
 app.use(notFoundError)

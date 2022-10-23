@@ -1,8 +1,10 @@
+import { validationResult } from 'express-validator';
 import '../Models/Games.model.js';
 import Game from '../Models/Games.model.js';
 
 
 export function displayAll(req, res) {
+    console.log(req.body)
     Game
         .find({})
         .then(docs => {
@@ -57,11 +59,18 @@ export function getDetails2(req, res) {
         })
 }
 
+export function test(req, res) {
+    console.log(req.body)
+    res.status(200).json({ message: "hi" })
+}
+
 export function addGame(req, res) {
     const game = new Game({
         name: req.body.name,
         year: req.body.year,
-        onSale: req.body.onSale
+        onSale: req.body.onSale,
+        //image: `${req.protocol}://${req.get('host')}/img/${req.file.filename}`,
+        image: 'http://127.0.0.1:3000/img/gamix.jpg'
     })
     //var game = new Game(++id, req.body.title, req.body.description, req.body.price, req.body.quantity)
     //Games.push(game)
@@ -75,19 +84,50 @@ export function addGame(req, res) {
         })
 }
 
+export function addOnce(req, res) {
+    console.log(req.body)
+    // Trouver les erreurs de validation dans cette requéte et les envelopper dans un
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).json({ errors: validationResult(req).array() });
+    }
+
+    else {
+        console.log(req.body)
+        // Invoquer la méthode create directement sur le modéle
+        Game
+            .create({
+                name: req.body.name,
+                year: req.body.year,
+                onSale: req.body.onSale,
+                // Récupérer 1'URL de l'image pour l'insérer dans la BD
+                image: `${req.protocol}://${req.get('host')}/img/${req.file.filename}`
+            }).then(newGame => {
+                res.status(200).json(newGame);
+            })
+            .catch(err => {
+                res.status(500).json({ error: err });
+            });
+    }
+}
+
 export function addGame2(req, res) {
-    Game
-        .create({
-            name: req.body.name,
-            year: req.body.year,
-            onSale: req.body.onSale
-        })
-        .then(newGame => {
-            res.status(200).json({ entity: newGame })
-        })
-        .catch(err => {
-            res.status(200).json({ error: err })
-        })
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).json({ errors: validationResult(req).array })
+    } else {
+        Game
+            .create({
+                name: req.body.name,
+                year: req.body.year,
+                onSale: req.body.onSale,
+                image: `${req.protocol}://${req.get('host')}/img/${req.file.filename}`,
+            })
+            .then(newGame => {
+                res.status(200).json({ entity: newGame })
+            })
+            .catch(err => {
+                res.status(200).json({ error: err })
+            })
+    }
 }
 
 export function addGame3(req, res) {

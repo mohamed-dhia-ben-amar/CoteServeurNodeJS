@@ -1,5 +1,5 @@
 import mongoose, { mongo } from 'mongoose';
-const { Schema, model} = mongoose
+const { Schema, model } = mongoose
 
 /* export default class Game {
     constructor (id, title, description, price, quantity) {
@@ -17,11 +17,16 @@ const gameSchema = new Schema(
             type: String,
             required: true,
         },
-        year : {
+        image:
+        {
+            type: String,
+            required: true
+        },
+        year: {
             type: Number,
             required: true
         },
-        onSale : {
+        onSale: {
             type: Boolean,
             required: true
         }
@@ -31,4 +36,4 @@ const gameSchema = new Schema(
     }
 );
 
-export default model ("Game", gameSchema)
+export default model("Game", gameSchema)
